@@ -1,0 +1,44 @@
+{% extends "painel/base.html" %}
+
+{% block title %}Horários{% endblock %}
+
+{% block content %}
+<h2>Horários do Restaurante</h2>
+
+<table border="1" cellpadding="8" cellspacing="0" style="width:100%; background:#fff; border-radius:6px;">
+    <thead>
+        <tr style="background:#0d6efd; color:white;">
+            <th>ID</th>
+            <th>Seg–Sex</th>
+            <th>Sábado</th>
+            <th>Domingo</th>
+            <th>Feriados</th>
+            <th>Ações</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for horario in horarios %}
+        <tr>
+            <td>{{ horario.id }}</td>
+            <td>{{ horario.abertura_seg_sex }} - {{ horario.fechamento_seg_sex }}</td>
+            <td>{{ horario.abertura_sab }} - {{ horario.fechamento_sab }}</td>
+            <td>{{ horario.abertura_dom }} - {{ horario.fechamento_dom }}</td>
+            <td>
+                {% if horario.abertura_feriado %}
+                    {{ horario.abertura_feriado }} - {{ horario.fechamento_feriado }}
+                {% else %}
+                    -
+                {% endif %}
+            </td>
+            <td>
+                <a href="{% url 'painel:horario-edit' horario.id %}">Editar</a>
+            </td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="6">Nenhum horário cadastrado.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cardápio | {{ site_info.nome|default:"Restaurante" }}</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        body { font-family: 'Inter', sans-serif; background-color: #fdfdfc; color: #1c1917; overflow-x: hidden; }
+        .font-serif { font-family: 'Playfair Display', serif; }
+
+        .glass-header {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+
+        /* Scrollbar Invisível para Categorias */
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+        /* Card de Prato */
+        .prato-card {
+            background: white;
+            border: 1px solid #f1f1f0;
+            transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+        }
+        .prato-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.04);
+            border-color: #fb923c;
+        }
+
+        /* Menu Lateral */
+        .side-menu {
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: 80%;
+            max-width: 300px;
+            height: 100vh;
+            background: white;
+            z-index: 100;
+            transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            padding: 40px 30px;
+        }
+        .side-menu.active { right: 0; }
+        .overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.4);
+            backdrop-filter: blur(2px);
+            z-index: 90;
+            opacity: 0;
+            visibility: hidden;
+            transition: 0.3s;
+        }
+        .overlay.active { opacity: 1; visibility: visible; }
+    </style>
+</head>
+<body class="flex flex-col min-h-screen">
+
+    <div class="overlay" id="overlay" onclick="toggleMenu()"></div>
+    <div class="side-menu" id="sideMenu">
+        <div class="flex justify-between items-center mb-10">
+            <span class="font-serif font-bold text-orange-600 uppercase tracking-tighter">Menu</span>
+            <button class="text-3xl leading-none" onclick="toggleMenu()">&times;</button>
+        </div>
+        <nav class="flex flex-col space-y-6 text-sm font-bold uppercase tracking-[0.2em] text-stone-500">
+            <a href="{% url 'home' %}" onclick="toggleMenu()">Início</a>
+            <a href="{% url 'categoria' %}" class="text-orange-600" onclick="toggleMenu()">Cardápio</a>
+            <a href="{% url 'promo' %}" onclick="toggleMenu()">Promoções</a>
+            <a href="{% url 'contatos' %}" onclick="toggleMenu()">Contato</a>
+        </nav>
+    </div>
+
+    <header class="glass-header border-b border-stone-100 sticky top-0 z-50 w-full">
+        <div class="container mx-auto px-6 h-20 flex items-center justify-between">
+            <div class="flex-1">
+                <a href="/" class="flex items-center">
+                    {% if site_info.logo %}
+                        <img src="{{ site_info.logo.url }}" alt="{{ site_info.nome }}" class="h-10 w-auto">
+                    {% else %}
+                        <h1 class="text-xl font-serif font-bold uppercase tracking-tighter text-orange-600">{{ site_info.nome }}</h1>
+                    {% endif %}
+                </a>
+            </div>
+
+            <nav class="hidden md:flex items-center space-x-8 font-semibold text-stone-500 text-[11px] uppercase tracking-[0.15em]">
+                <a href="{% url 'home' %}" class="hover:text-orange-600 transition">Início</a>
+                <a href="{% url 'categoria' %}" class="text-orange-600 border-b-2 border-orange-600 pb-1">Cardápio</a>
+                <a href="{% url 'promo' %}" class="hover:text-orange-600 transition">Promoções</a>
+                <a href="{% url 'contatos' %}" class="hover:text-orange-600 transition">Contato</a>
+            </nav>
+
+            <div class="flex-1 flex justify-end">
+                <button class="md:hidden text-2xl p-2" onclick="toggleMenu()">
+                    <i class="fa-solid fa-bars text-stone-800"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-grow py-12">
+        <div class="container mx-auto px-6">
+            
+            <div class="mb-10 text-center md:text-left">
+                <span class="text-orange-600 font-bold tracking-[0.3em] text-[10px] uppercase">Menu Exclusivo</span>
+                <h1 class="text-4xl md:text-5xl font-serif font-bold mt-2">Nossas Delícias</h1>
+                
+                <div class="category-list no-scrollbar flex gap-3 overflow-x-auto py-6 mt-4">
+                    {% for cat in categorias %}
+                        <a href="{% url 'pratos' cat.id %}" 
+                           class="px-6 py-2 rounded-full text-xs font-bold uppercase tracking-widest transition-all whitespace-nowrap
+                           {% if categoria and categoria.id == cat.id %} 
+                                bg-orange-600 text-white shadow-lg shadow-orange-200 
+                           {% else %} 
+                                bg-stone-100 text-stone-500 hover:bg-stone-200 
+                           {% endif %}">
+                            {{ cat.nome }}
+                        </a>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+                {% for prato in pratos %}
+                <div class="prato-card rounded-3xl overflow-hidden flex flex-col">
+                    <div class="relative overflow-hidden h-56">
+                        {% if prato.imagem %}
+                            <img src="{{ prato.imagem.url }}" alt="{{ prato.nome }}" class="w-full h-full object-cover">
+                        {% else %}
+                            <img src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=500" class="w-full h-full object-cover">
+                        {% endif %}
+                        
+                        {% if prato.vegetariano %}
+                        <span class="absolute top-4 right-4 bg-green-500/90 backdrop-blur-md text-white text-[9px] font-bold px-3 py-1 rounded-full uppercase tracking-tighter">
+                            <i class="fa-solid fa-leaf mr-1"></i> Veggie
+                        </span>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="p-6 flex flex-col flex-grow">
+                        <div class="flex justify-between items-start mb-3">
+                            <h2 class="font-bold text-lg text-stone-800 leading-tight">{{ prato.nome }}</h2>
+                            <span class="text-orange-600 font-bold text-lg whitespace-nowrap ml-2">R$ {{ prato.preco }}</span>
+                        </div>
+                        
+                        {% if prato.descricao %}
+                            <p class="text-stone-500 text-sm leading-relaxed mb-6 flex-grow">
+                                {{ prato.descricao|truncatechars:100 }}
+                            </p>
+                        {% endif %}
+
+                        <a href="#" class="mt-auto text-[10px] font-bold uppercase tracking-widest text-stone-400 hover:text-orange-600 transition flex items-center gap-2">
+                            Ver detalhes <i class="fa-solid fa-chevron-right text-[8px]"></i>
+                        </a>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="col-span-full py-20 text-center">
+                    <i class="fa-solid fa-utensils text-4xl text-stone-200 mb-4"></i>
+                    <p class="text-stone-400 italic">Nenhum prato encontrado nesta categoria.</p>
+                </div>
+                {% endfor %}
+            </div>
+
+            {% if pratos.paginator.num_pages > 1 %}
+            <div class="mt-16 flex justify-center items-center gap-2">
+                {% if pratos.has_previous %}
+                    <a href="?page={{ pratos.previous_page_number }}" class="w-10 h-10 flex items-center justify-center rounded-full bg-white border border-stone-200 text-stone-600 hover:bg-orange-600 hover:text-white transition">
+                        <i class="fa-solid fa-chevron-left"></i>
+                    </a>
+                {% endif %}
+
+                <div class="flex gap-2">
+                    {% for num in pratos.paginator.page_range %}
+                        {% if pratos.number == num %}
+                            <span class="w-10 h-10 flex items-center justify-center rounded-full bg-orange-600 text-white font-bold">{{ num }}</span>
+                        {% else %}
+                            <a href="?page={{ num }}" class="w-10 h-10 flex items-center justify-center rounded-full bg-white border border-stone-200 text-stone-600 hover:border-orange-600 hover:text-orange-600 transition">
+                                {{ num }}
+                            </a>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+
+                {% if pratos.has_next %}
+                    <a href="?page={{ pratos.next_page_number }}" class="w-10 h-10 flex items-center justify-center rounded-full bg-white border border-stone-200 text-stone-600 hover:bg-orange-600 hover:text-white transition">
+                        <i class="fa-solid fa-chevron-right"></i>
+                    </a>
+                {% endif %}
+            </div>
+            {% endif %}
+
+        </div>
+    </main>
+
+    <footer class="bg-stone-950 text-stone-500 py-16 mt-auto">
+        <div class="container mx-auto px-6 text-center">
+            <p class="text-[10px] uppercase tracking-[0.4em] mb-4">&copy; {% now "Y" %} {{ site_info.nome }}</p>
+            <div class="flex justify-center space-x-6 text-xl">
+                <a href="#" class="hover:text-white transition"><i class="fa-brands fa-instagram"></i></a>
+                <a href="#" class="hover:text-white transition"><i class="fa-brands fa-whatsapp"></i></a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        function toggleMenu() {
+            const menu = document.getElementById('sideMenu');
+            const overlay = document.getElementById('overlay');
+            const body = document.body;
+
+            menu.classList.toggle('active');
+            overlay.classList.toggle('active');
+            
+            if (menu.classList.contains('active')) {
+                body.style.overflow = 'hidden';
+            } else {
+                body.style.overflow = 'auto';
+            }
+        }
+    </script>
+</body>
+</html>
+

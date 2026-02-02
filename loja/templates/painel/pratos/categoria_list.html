@@ -1,0 +1,36 @@
+{% extends "painel/base.html" %}
+
+{% block title %}Categorias de Pratos{% endblock %}
+
+{% block content %}
+<h2>Categorias de Pratos</h2>
+
+<table border="1" cellpadding="8" cellspacing="0" style="width:100%; background:#fff; border-radius:6px;">
+    <thead>
+        <tr style="background:#0d6efd; color:white;">
+            <th>ID</th>
+            <th>Nome</th>
+            <th>Ativo</th>
+            <th>Ações</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for categoria in categorias %}
+        <tr>
+            <td>{{ categoria.id }}</td>
+            <td>
+                <a href="{% url 'painel:pratos-por-categoria' categoria.id %}">{{ categoria.nome }}</a>
+            </td>
+            <td>{{ categoria.ativo }}</td>
+            <td>
+                <a href="{% url 'painel:categoria-prato-edit' categoria.id %}">Editar</a>
+            </td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="4">Nenhuma categoria cadastrada.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

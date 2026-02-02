@@ -1,0 +1,68 @@
+{% extends "painel/base.html" %}
+
+{% block title %}
+  Painel Administrativo – Categorias Home
+{% endblock %}
+
+{% block content %}
+
+<div class="card">
+  <h2>Galeria Categorias</h2>
+  <p style="color:#666; margin-bottom:15px;">
+    Lista de categorias exibidas na página inicial
+  </p>
+
+  <ul style="list-style:none; padding:0;">
+
+    {% for c in categorias %}
+      <li style="
+        background:#f9f9f9;
+        padding:15px;
+        border-radius:8px;
+        margin-bottom:12px;
+        display:flex;
+        justify-content:space-between;
+        align-items:center;
+      ">
+
+        <a href="{% url 'painel:galeria-blocos' c.id %}"
+           style="
+             font-weight:600;
+             color:#0d6efd;
+             text-decoration:none;
+           ">
+          {{ c.titulo }}
+        </a>
+        
+        <span style="color:#777; font-size:14px;">
+          ordem {{ c.ordem }}
+        </span>
+
+        <span style="color:#777; font-size:14px;">
+          ID {{ c.id }}
+        </span>
+        
+                <a href="{% url 'painel:home-categorias-edit' c.id %}"
+             style="
+               background:#0d6efd;
+               color:#fff;
+               padding:8px 12px;
+               border-radius:6px;
+               text-decoration:none;
+               font-size:14px;
+             ">
+            Editar
+          </a>
+        </div>
+
+      </li>
+    {% empty %}
+      <li style="color:#777;">
+        Nenhuma categoria cadastrada.
+      </li>
+    {% endfor %}
+
+  </ul>
+</div>
+
+{% endblock %}

@@ -1,0 +1,38 @@
+{% extends "painel/base.html" %}
+
+{% block title %}Pratos em Destaque{% endblock %}
+
+{% block content %}
+<h2>Pratos em Destaque</h2>
+
+<table border="1" cellpadding="8" cellspacing="0" style="width:100%; background:#fff; border-radius:6px;">
+    <thead>
+        <tr style="background:#0d6efd; color:white;">
+            <th>ID</th>
+            <th>Nome</th>
+            <th>Preço</th>
+            <th>Ordem</th>
+            <th>Ações</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for prato in pratos %}
+        <tr>
+            <td>{{ prato.id }}</td>
+            <td>
+                <a href="{% url 'painel:pratos-destaque-detail' prato.id %}">{{ prato.nome }}</a>
+            </td>
+            <td>{{ prato.preco }}</td>
+            <td>{{ prato.ordem }}</td>
+            <td>
+                <a href="{% url 'painel:pratos-destaque-edit' prato.id %}">Editar</a>
+            </td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="5">Nenhum prato em destaque.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

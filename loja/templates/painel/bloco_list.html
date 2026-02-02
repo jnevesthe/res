@@ -1,0 +1,65 @@
+{% extends "painel/base.html" %}
+
+{% block title %}
+    Painel Administrativo – Blocos
+{% endblock %}
+
+{% block content %}
+
+<div class="card">
+  <h2>Blocos – {{ categoria.nome }}</h2>
+  <p style="color:#666; margin-bottom:15px;">
+    Lista de blocos cadastrados nesta categoria
+  </p>
+
+  <ul style="list-style:none; padding:0;">
+
+    {% for b in blocos %}
+      <li style="
+        background:#f9f9f9;
+        padding:15px;
+        border-radius:8px;
+        margin-bottom:12px;
+        display:flex;
+        justify-content:space-between;
+        align-items:center;
+      ">
+
+        <div>
+          <strong>
+            <a href="{% url 'painel:home-bloco-detail' b.id %}"
+               style="text-decoration:none; color:#0d6efd;">
+              {{ b.nome|default:b.titulo }}
+            </a>
+          </strong>
+          <br>
+          <small style="color:#777;">
+            ID {{ b.id }} • Ordem {{ b.ordem }}
+          </small>
+        </div>
+
+        <div>
+          <a href="{% url 'painel:home-bloco-edit' b.id %}"
+             style="
+               background:#0d6efd;
+               color:#fff;
+               padding:8px 12px;
+               border-radius:6px;
+               text-decoration:none;
+               font-size:14px;
+             ">
+            Editar
+          </a>
+        </div>
+
+      </li>
+    {% empty %}
+      <li style="color:#777;">
+        Nenhum bloco encontrado.
+      </li>
+    {% endfor %}
+
+  </ul>
+</div>
+
+{% endblock %}

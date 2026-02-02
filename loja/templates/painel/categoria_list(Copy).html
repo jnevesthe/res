@@ -1,0 +1,16 @@
+
+
+<h1 class="text-3xl font-bold mb-6">Categorias Home</h1>
+
+<ul class="space-y-3">
+{% for c in categorias %}
+    <li class="bg-white p-4 rounded shadow flex justify-between">
+        <a href="{% url 'painel:home-blocos' c.id %}" class="font-semibold text-blue-600">
+            {{ c.nome }} (ordem {{ c.ordem }})
+        </a>
+        <span>ID {{ c.id }}</span>
+    </li>
+{% endfor %}
+</ul>
+
+

@@ -1,0 +1,44 @@
+{% extends "painel/base.html" %}
+{% block title %}Detalhes do Bloco{% endblock %}
+
+{% block page_title %}Detalhes do Bloco{% endblock %}
+
+{% block content %}
+<div class="bg-white shadow-md rounded-xl p-6 max-w-2xl mx-auto">
+    {% if bloco.imagem %}
+    <img src="{{ bloco.imagem.url }}" alt="{{ bloco.titulo }}" class="rounded w-full h-60 object-cover mb-4">
+    {% endif %}
+    <h2 class="text-2xl font-bold text-blue-700">{{ bloco.nome }}</h2>
+    <p class="text-gray-700 mt-4">{{ bloco.titulo }}</p>
+    <br>
+    <p class="text-gray-700 mt-4">{{ bloco.texto }}</p>
+
+    {% if bloco.link_url %}
+    <p class="mt-2"><strong>{{ bloco.link_url }}"</strong></a>
+    <p>{{ bloco.link_texto }}</p>
+    {% endif %}
+
+    {% if bloco.botao_url %}
+    <p class="mt-2"><strong>Botão:</strong>{{ bloco.botao_url }}</strong></p>
+    <p>{{bloco.botao_texto}}</p>
+    {% endif %}
+    
+    <br>
+    
+    <div>
+          <a href="{% url 'painel:home-bloco-edit' bloco.id %}"
+             style="
+               background:#0d6efd;
+               color:#fff;
+               padding:8px 12px;
+               border-radius:6px;
+               text-decoration:none;
+               font-size:14px;
+             ">
+            Editar
+          </a>
+        </div>
+    
+    
+
+{% endblock %}

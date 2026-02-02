@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contato | {% if site_info %}{{ site_info.nome }}{% else %}Restaurante{% endif %}</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,700&family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        body { font-family: 'Inter', sans-serif; background-color: #fdfdfc; color: #1c1917; overflow-x: hidden; }
+        .font-serif { font-family: 'Playfair Display', serif; }
+
+        .glass-header {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #f97316, #ea580c);
+            color: white; font-weight: 600; border-radius: 9999px;
+            box-shadow: 0 8px 15px rgba(234,88,12,0.15); transition: all .3s ease;
+        }
+        .btn-primary:hover { transform: scale(1.03); box-shadow: 0 12px 20px rgba(234,88,12,0.25); }
+
+        .contact-card {
+            background: white; border: 1px solid #f1f1f0; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .contact-card:hover { transform: translateY(-8px); box-shadow: 0 25px 50px -12px rgba(0,0,0,0.06); border-color: #fdba74; }
+        
+        .icon-circle { transition: all 0.4s ease; }
+        .contact-card:hover .icon-circle { transform: rotate(10deg) scale(1.1); }
+
+        /* --- ESTILOS DA BARRA LATERAL --- */
+        .side-menu {
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: 80%;
+            max-width: 300px;
+            height: 100vh;
+            background: white;
+            z-index: 100;
+            transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: -10px 0 30px rgba(0,0,0,0.1);
+            padding: 40px 30px;
+        }
+        .side-menu.active { right: 0; }
+        
+        .overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.4);
+            backdrop-filter: blur(2px);
+            z-index: 90;
+            opacity: 0;
+            visibility: hidden;
+            transition: 0.3s;
+        }
+        .overlay.active { opacity: 1; visibility: visible; }
+    </style>
+</head>
+<body class="flex flex-col min-h-screen">
+
+    <div class="overlay" id="overlay" onclick="toggleMenu()"></div>
+    
+    <div class="side-menu" id="sideMenu">
+        <div class="flex justify-between items-center mb-10">
+            <span class="font-serif font-bold text-orange-600 uppercase tracking-tighter">Menu</span>
+            <button class="text-3xl leading-none" onclick="toggleMenu()">&times;</button>
+        </div>
+        <nav class="flex flex-col space-y-6 text-sm font-bold uppercase tracking-[0.2em] text-stone-500">
+            <a href="{% url 'home' %}" onclick="toggleMenu()">Início</a>
+            <a href="{% url 'categoria' %}" onclick="toggleMenu()">Cardápio</a>
+            <a href="{% url 'contatos' %}" class="text-orange-600" onclick="toggleMenu()">Contato</a>
+            {% if contato.whatsapp %}
+            <a href="https://wa.me/{{ contato.whatsapp|cut:' ' }}" class="pt-4 text-orange-600 underline">Reservar Agora</a>
+            {% endif %}
+        </nav>
+    </div>
+
+    <header class="glass-header border-b border-stone-100 sticky top-0 z-50 w-full">
+        <div class="container mx-auto px-6 h-20 flex items-center justify-between">
+            <div class="flex-1">
+                <a href="/" class="flex items-center">
+                    {% if site_info.logo %}
+                        <img src="{{ site_info.logo.url }}" alt="{{ site_info.nome }}" class="h-10 w-auto">
+                    {% else %}
+                        <h1 class="text-xl font-serif font-bold uppercase tracking-tighter">{{ site_info.nome }}</h1>
+                    {% endif %}
+                </a>
+            </div>
+
+            <nav class="hidden md:flex items-center space-x-8 font-semibold text-stone-500 text-[11px] uppercase tracking-[0.15em]">
+                <a href="{% url 'home' %}" class="hover:text-orange-600 transition">Início</a>
+                <a href="{% url 'categoria' %}" class="hover:text-orange-600 transition">Cardápio</a>
+                <a href="{% url 'contatos' %}" class="text-orange-600 border-b-2 border-orange-600 pb-1">Contato</a>
+            </nav>
+
+            <div class="flex-1 flex justify-end items-center gap-4">
+                {% if contato.whatsapp %}
+                <a href="https://wa.me/{{ contato.whatsapp|cut:' ' }}" class="hidden md:inline-flex btn-primary px-6 py-2.5 text-[10px] tracking-widest uppercase">Reservar</a>
+                {% endif %}
+                
+                <button class="md:hidden text-2xl p-2" onclick="toggleMenu()">
+                    <i class="fa-solid fa-bars text-stone-800"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-grow">
+        <section class="py-20 bg-stone-50 border-b border-stone-100">
+            <div class="container mx-auto px-6 text-center">
+                <span class="inline-block px-4 py-1.5 bg-orange-100 text-orange-700 rounded-full font-bold tracking-[0.2em] text-[9px] uppercase mb-4">Estamos aqui para você</span>
+                <h2 class="text-4xl md:text-6xl font-serif font-bold text-stone-900 mb-6">Entre em Contato</h2>
+                <p class="text-stone-500 max-w-xl mx-auto text-lg">Escolha o canal de sua preferência ou visite-nos em nossa unidade.</p>
+            </div>
+        </section>
+
+        <section class="py-20">
+            <div class="container mx-auto px-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto">
+                    {% if contato.whatsapp %}
+                    <a href="https://wa.me/{{ contato.whatsapp|cut:' ' }}" target="_blank" class="contact-card p-10 rounded-3xl text-center">
+                        <div class="icon-circle w-14 h-14 bg-green-50 rounded-2xl flex items-center justify-center mb-6 mx-auto">
+                            <i class="fa-brands fa-whatsapp text-2xl text-green-600"></i>
+                        </div>
+                        <h3 class="font-bold text-stone-800 mb-2">WhatsApp</h3>
+                        <p class="text-stone-500 text-sm mb-4">Atendimento rápido</p>
+                        <span class="text-orange-600 font-semibold">{{ contato.whatsapp }}</span>
+                    </a>
+                    {% endif %}
+
+                    {% if contato.telefone %}
+                    <div class="contact-card p-10 rounded-3xl text-center">
+                        <div class="icon-circle w-14 h-14 bg-orange-50 rounded-2xl flex items-center justify-center mb-6 mx-auto">
+                            <i class="fa-solid fa-phone text-xl text-orange-600"></i>
+                        </div>
+                        <h3 class="font-bold text-stone-800 mb-2">Telefone</h3>
+                        <p class="text-stone-500 text-sm mb-2">Ligações diretas</p>
+                        <p class="text-stone-700 font-semibold">{{ contato.telefone }}</p>
+                    </div>
+                    {% endif %}
+
+                    {% if contato.insta %}
+                    <a href="https://instagram.com/{{ contato.insta|cut:'@' }}" target="_blank" class="contact-card p-10 rounded-3xl text-center">
+                        <div class="icon-circle w-14 h-14 bg-pink-50 rounded-2xl flex items-center justify-center mb-6 mx-auto">
+                            <i class="fa-brands fa-instagram text-2xl text-pink-600"></i>
+                        </div>
+                        <h3 class="font-bold text-stone-800 mb-2">Instagram</h3>
+                        <p class="text-stone-500 text-sm mb-4">Novidades diárias</p>
+                        <span class="text-orange-600 font-semibold">@{{ contato.insta|cut:"@" }}</span>
+                    </a>
+                    {% endif %}
+
+                    {% if contato.email %}
+                    <a href="mailto:{{ contato.email }}" class="contact-card p-10 rounded-3xl text-center">
+                        <div class="icon-circle w-14 h-14 bg-blue-50 rounded-2xl flex items-center justify-center mb-6 mx-auto">
+                            <i class="fa-solid fa-envelope text-xl text-blue-600"></i>
+                        </div>
+                        <h3 class="font-bold text-stone-800 mb-2">E-mail</h3>
+                        <p class="text-stone-500 text-sm mb-4">Eventos e parcerias</p>
+                        <span class="text-orange-600 font-semibold break-all text-sm">{{ contato.email }}</span>
+                    </a>
+                    {% endif %}
+                </div>
+
+                <div class="mt-20 grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-7xl mx-auto">
+                    <div class="bg-white p-10 rounded-3xl border border-stone-100">
+                        <h4 class="text-2xl font-serif font-bold mb-8 flex items-center gap-3">
+                            <i class="fa-regular fa-clock text-orange-600"></i> Horário de Funcionamento
+                        </h4>
+                        <div class="space-y-4">
+                            {% if horario %}
+                            <div class="flex justify-between items-center pb-4 border-b border-stone-50">
+                                <span class="text-stone-500 font-medium">Segunda a Sexta</span>
+                                <span class="text-stone-900 font-bold">{{ horario.abertura_seg_sex|time:"H:i" }} — {{ horario.fechamento_seg_sex|time:"H:i" }}</span>
+                            </div>
+                            <div class="flex justify-between items-center pb-4 border-b border-stone-50">
+                                <span class="text-stone-500 font-medium">Sábados</span>
+                                <span class="text-stone-900 font-bold">{{ horario.abertura_sab|time:"H:i" }} — {{ horario.fechamento_sab|time:"H:i" }}</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-stone-500 font-medium">Domingos e Feriados</span>
+                                <span class="text-stone-900 font-bold">{{ horario.abertura_dom|time:"H:i" }} — {{ horario.fechamento_dom|time:"H:i" }}</span>
+                            </div>
+                            {% else %}
+                            <p class="text-stone-400 italic text-sm">Consulte nossos horários especiais via WhatsApp.</p>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="bg-stone-900 p-10 rounded-3xl text-white relative overflow-hidden group">
+                        <div class="relative z-10">
+                            <h4 class="text-2xl font-serif font-bold mb-6 italic text-orange-400">Onde Estamos</h4>
+                            <p class="text-lg text-stone-300 mb-8 max-w-xs">Encontre-nos no coração da cidade e desfrute de uma experiência única.</p>
+                            <p class="font-bold text-xl mb-10"><i class="fa-solid fa-location-dot text-orange-500 mr-2"></i> {{ site_info.endereco|default:"Consulte nosso endereço" }}</p>
+                            <a href="#" class="inline-flex items-center gap-2 text-sm font-bold uppercase tracking-widest text-orange-500 hover:text-orange-400 transition">
+                                Ver no Google Maps <i class="fa-solid fa-arrow-right text-xs"></i>
+                            </a>
+                        </div>
+                        <div class="absolute -bottom-20 -right-20 w-64 h-64 bg-orange-600/10 rounded-full blur-3xl group-hover:bg-orange-600/20 transition-all duration-700"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-stone-950 text-stone-500 py-12 border-t border-stone-900">
+        <div class="container mx-auto px-6">
+            <div class="flex flex-col md:flex-row justify-between items-center gap-8">
+                <div class="text-center md:text-left">
+                    {% if site_info.logo %}
+                        <img src="{{ site_info.logo.url }}" class="h-8 w-auto mb-4 brightness-0 invert opacity-40 mx-auto md:mx-0">
+                    {% endif %}
+                    <p class="text-[10px] uppercase tracking-[0.3em] opacity-40">&copy; {% now "Y" %} {{ site_info.nome }}</p>
+                </div>
+                
+                <div class="flex space-x-8 text-[10px] font-bold uppercase tracking-widest">
+                    <a href="{% url 'home' %}" class="hover:text-white transition">Início</a>
+                    <a href="{% url 'categoria' %}" class="hover:text-white transition">Cardápio</a>
+                    <a href="{% url 'contatos' %}" class="text-orange-600">Contato</a>
+                </div>
+
+                <div class="flex space-x-5">
+                    {% if contato.insta %}<a href="https://instagram.com/{{ contato.insta|cut:'@' }}" class="text-lg hover:text-white transition"><i class="fa-brands fa-instagram"></i></a>{% endif %}
+                    {% if contato.whatsapp %}<a href="https://wa.me/{{ contato.whatsapp|cut:' ' }}" class="text-lg hover:text-white transition"><i class="fa-brands fa-whatsapp"></i></a>{% endif %}
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        function toggleMenu() {
+            const menu = document.getElementById('sideMenu');
+            const overlay = document.getElementById('overlay');
+            const body = document.body;
+
+            menu.classList.toggle('active');
+            overlay.classList.toggle('active');
+            
+            // Trava o scroll quando aberto
+            if (menu.classList.contains('active')) {
+                body.style.overflow = 'hidden';
+            } else {
+                body.style.overflow = 'auto';
+            }
+        }
+    </script>
+
+</body>
+</html>
+

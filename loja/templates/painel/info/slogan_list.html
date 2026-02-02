@@ -1,0 +1,32 @@
+{% extends "painel/base.html" %}
+
+{% block title %}Slogans{% endblock %}
+
+{% block content %}
+<h2>Slogans</h2>
+
+<table border="1" cellpadding="8" cellspacing="0" style="width:100%; background:#fff; border-radius:6px;">
+    <thead>
+        <tr style="background:#0d6efd; color:white;">
+            <th>ID</th>
+            <th>Slogan</th>
+            <th>Ações</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for slogan in slogans %}
+        <tr>
+            <td>{{ slogan.id }}</td>
+            <td>{{ slogan.slogan }}</td>
+            <td>
+                <a href="{% url 'painel:slogan-edit' slogan.id %}">Editar</a>
+            </td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="3">Nenhum slogan cadastrado.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
