@@ -1,0 +1,16 @@
+{% extends "painel/base.html" %}
+
+{% block title %}
+  Painel Administrativo – Login
+{% endblock %}
+
+{% block content %}
+<!-- FORMULÁRIO -->
+
+    <p>{{contato.telefone}}</p>
+    
+    <a class="btn" href="{% url 'painel:contatos-edit' contato.id %}">Editar</a>
+  
+    
+</div>
+{% endblock %}

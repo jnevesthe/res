@@ -1,0 +1,51 @@
+{% extends "painel/base.html" %}
+
+{% block title %}
+  Painel Administrativo – Categorias Home
+{% endblock %}
+
+{% block content %}
+
+<div class="card">
+  <h2>Contatos</h2>
+  <p style="color:#666; margin-bottom:15px;">
+    Lista de Contatos 
+  </p>
+
+  <ul style="list-style:none; padding:0;">
+
+    {% for c in contatos %}
+      <li style="
+        background:#f9f9f9;
+        padding:15px;
+        border-radius:8px;
+        margin-bottom:12px;
+        display:flex;
+        justify-content:space-between;
+        align-items:center;
+      ">
+
+        <a href="{% url 'painel:contatos-detail'  c.id %}"
+           style="
+             font-weight:600;
+             color:#0d6efd;
+             text-decoration:none;
+           ">
+          {{ c.telefone }}
+        </a>
+
+        <span style="color:#777; font-size:14px;">
+          ID {{ c.id }}
+        </span>
+
+      </li>
+    {% empty %}
+      <li style="color:#777;">
+        Nenhuma lista de Contatos cadastrada.
+      </li>
+    {% endfor %}
+
+  </ul>
+</div>
+
+{% endblock %}

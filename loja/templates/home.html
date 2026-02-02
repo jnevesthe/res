@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{% if site_info %}{{ site_info.nome }}{% else %}Restaurante{% endif %}</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+<style>
+    body { display: flex; flex-direction: column; min-height: 100vh; }
+    main { flex: 1; }
+    html { scroll-behavior: smooth; }
+    .hero-gradient { background: rgba(0,0,0,0.3); }
+</style>
+</head>
+<body class="bg-stone-50 text-stone-800 font-sans">
+
+<!-- Header -->
+<header class="bg-white border-b border-stone-200 sticky top-0 z-50 w-full h-20 flex items-center">
+    <div class="container mx-auto px-6 flex justify-between items-center">
+        <div class="flex-1">
+            {% if site_info.logo %}
+                <img src="{{ site_info.logo.url }}" alt="{{ site_info.nome }}" class="h-12 w-auto object-contain">
+            {% elif site_info.nome %}
+                <h1 class="text-xl font-serif font-bold uppercase tracking-tighter">{{ site_info.nome }}</h1>
+            {% endif %}
+        </div>
+        <nav class="hidden md:flex space-x-10 font-medium text-stone-500 text-xs uppercase tracking-widest">
+            <a href="#" class="hover:text-orange-600 transition">Início</a>
+            <a href="#destaques" class="hover:text-orange-600 transition">Destaques</a>
+            <a href="#promocoes" class="hover:text-orange-600 transition">Promoções</a>
+            <a href="#categorias" class="hover:text-orange-600 transition">Menu</a>
+            <a href="#home-blocos" class="hover:text-orange-600 transition">Blocos</a>
+            <a href="#contato" class="hover:text-orange-600 transition">Contato</a>
+        </nav>
+        <div class="flex-1 md:hidden"></div>
+    </div>
+</header>
+
+<main>
+
+<!-- Banner -->
+{% if banners %}
+    {% for banner in banners %}
+        {% if banner.ativo %}
+        <section class="relative h-[500px] flex items-center justify-center text-white overflow-hidden">
+            {% if banner.imagem %}
+            <img src="{{ banner.imagem.url }}" class="absolute inset-0 w-full h-full object-cover" alt="">
+            <div class="absolute inset-0 hero-gradient"></div>
+            {% endif %}
+            <div class="relative text-center px-4 max-w-4xl">
+                {% if banner.titulo %}<h2 class="text-5xl md:text-6xl font-serif font-bold mb-4">{{ banner.titulo }}</h2>{% endif %}
+                {% if banner.texto %}<p class="text-lg md:text-xl font-light opacity-90 mb-4">{{ banner.texto }}</p>{% endif %}
+                {% if banner.link %}
+                <a href="{{ banner.link }}" class="inline-block bg-orange-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-orange-500 transition">
+                    {{ banner.texto_link|default:"Saiba Mais" }}
+                </a>
+                {% endif %}
+            </div>
+        </section>
+        {% endif %}
+    {% endfor %}
+{% endif %}
+
+<!-- Slogan -->
+{% if slogan %}
+<section class="text-center py-12 bg-stone-50">
+    <p class="text-xl italic font-light text-stone-700">"{{ slogan.slogan }}"</p>
+</section>
+{% endif %}
+
+<!-- Destaques de Pratos -->
+<section id="destaques" class="py-20 container mx-auto px-6">
+    <h2 class="text-3xl font-serif font-bold text-stone-900 uppercase tracking-widest text-center mb-12">Destaques</h2>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+      {% if destaques %}
+        {% for destaque in destaques %}
+        {% if destaque.ativo %}
+        <div class="flex flex-col">
+            {% if destaque.imagem %}
+            <img src="{{ destaque.imagem.url }}" class="w-full h-64 object-cover rounded-lg" alt="{{ destaque.nome }}">
+            {% endif %}
+            <div class="mt-4 flex justify-between items-center">
+                <h3 class="font-bold text-lg">{{ destaque.nome }}</h3>
+                <span class="text-orange-600 font-bold">R$ {{ destaque.preco }}</span>
+            </div>
+            {% if destaque.descricao %}<p class="text-stone-500 italic text-sm mt-1">{{ destaque.descricao }}</p>{% endif %}
+        </div>
+        {% endif %}
+        {% endfor %}
+      {% endif %}
+    </div>
+</section>
+
+
+<!-- Home Blocos (soltos, sem caixas) -->
+<section id="home-blocos" class="py-20 container mx-auto px-6 space-y-12">
+    {% if categorias %}
+      {% for categoria in categorias %}
+        {% for bloco in categoria.blocos.all %}
+        {% if bloco.ativo %}
+        <div class="flex flex-col md:flex-row items-start md:items-center gap-6">
+            {% if bloco.imagem %}
+            <div class="md:w-1/2">
+                <img src="{{ bloco.imagem.url }}" alt="{{ bloco.imagem_texto }}" class="w-full h-auto object-cover rounded">
+                {% if bloco.imagem_texto %}<p class="text-sm text-stone-500 mt-2">{{ bloco.imagem_texto }}</p>{% endif %}
+            </div>
+            {% endif %}
+            <div class="md:w-1/2 flex flex-col gap-4">
+                {% if bloco.titulo %}<h3 class="text-3xl font-bold">{{ bloco.titulo }}</h3>{% endif %}
+                {% if bloco.texto %}<p class="text-stone-700">{{ bloco.texto }}</p>{% endif %}
+                {% if bloco.link_url %}
+                <a href="{{ bloco.link_url }}" class="text-orange-600 font-semibold underline">
+                    {{ bloco.link_texto|default:"Saiba Mais" }}
+                </a>
+                {% endif %}
+                {% if bloco.botao_url %}
+                <a href="{{ bloco.botao_url }}" class="inline-block bg-orange-600 text-white px-4 py-2 rounded hover:bg-orange-500 transition">
+                    {{ bloco.botao_texto|default:"Clique Aqui" }}
+                </a>
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
+        {% endfor %}
+      {% endfor %}
+    {% endif %}
+</section>
+
+
+<!-- Promoções -->
+{% if promocoes %}
+<section id="promocoes" class="py-20 bg-orange-600 text-white">
+    <div class="container mx-auto px-6">
+        <h2 class="text-4xl font-serif font-bold italic text-center mb-8">Ofertas Especiais</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            {% for promo in promocoes %}
+            {% if promo.ativo %}
+            <div class="flex flex-col md:flex-row overflow-hidden rounded-lg">
+                {% if promo.imagem %}
+                <div class="md:w-2/5 h-48 md:h-auto relative">
+                    <img src="{{ promo.imagem.url }}" class="w-full h-full object-cover" alt="{{ promo.titulo }}">
+                    {% if promo.tag_desconto %}
+                    <span class="absolute top-4 left-4 bg-red-600 text-white text-xs font-bold px-3 py-1 rounded-full uppercase">
+                        {{ promo.tag_desconto }}
+                    </span>
+                    {% endif %}
+                </div>
+                {% endif %}
+                <div class="md:w-3/5 p-6 flex flex-col justify-center">
+                    <h3 class="text-2xl font-bold mb-2">{{ promo.titulo }}</h3>
+                    <p>{{ promo.descricao }}</p>
+                </div>
+            </div>
+            {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- Contato e Horários -->
+<footer id="contato" class="bg-stone-900 text-stone-400 py-20 mt-auto border-t border-stone-800">
+    <div class="container mx-auto px-6 grid grid-cols-1 md:grid-cols-3 gap-16">
+        <div>
+            {% if site_info.logo %}
+                <img src="{{ site_info.logo.url }}" class="h-10 w-auto mb-6 brightness-0 invert opacity-70" alt="">
+            {% endif %}
+            {% if slogan %}<p class="font-light italic text-sm">"{{ slogan.slogan }}"</p>{% endif %}
+        </div>
+        <div>
+            <h4 class="text-white font-bold uppercase text-xs tracking-widest mb-8">Horários</h4>
+            {% if horarios %}
+                {% for h in horarios %}
+                <div class="text-sm space-y-2 font-light">
+                    <p class="flex justify-between"><span>Seg - Sex:</span> <span>{{ h.abertura_seg_sex|time:"H:i" }} - {{ h.fechamento_seg_sex|time:"H:i" }}</span></p>
+                    <p class="flex justify-between"><span>Sábados:</span> <span>{{ h.abertura_sab|time:"H:i" }} - {{ h.fechamento_sab|time:"H:i" }}</span></p>
+                    <p class="flex justify-between"><span>Domingos:</span> <span>{{ h.abertura_dom|time:"H:i" }} - {{ h.fechamento_dom|time:"H:i" }}</span></p>
+                </div>
+                {% endfor %}
+            {% endif %}
+        </div>
+        <div>
+            <h4 class="text-white font-bold uppercase text-xs tracking-widest mb-8">Contato</h4>
+            {% if contatos %}
+                {% for c in contatos %}
+                <div class="text-sm space-y-2">
+                    {% if c.telefone %}<p><i class="fa-solid fa-phone mr-2"></i>{{ c.telefone }}</p>{% endif %}
+                    {% if c.whatsapp %}<p class="text-orange-500 font-medium"><i class="fa-brands fa-whatsapp mr-2"></i>{{ c.whatsapp }}</p>{% endif %}
+                    {% if c.email %}<p><i class="fa-solid fa-envelope mr-2"></i>{{ c.email }}</p>{% endif %}
+                    {% if c.insta %}<p><i class="fa-brands fa-instagram mr-2"></i>{{ c.insta }}</p>{% endif %}
+                </div>
+                {% endfor %}
+            {% endif %}
+        </div>
+    </div>
+</footer>
+
+</body>
+</html>

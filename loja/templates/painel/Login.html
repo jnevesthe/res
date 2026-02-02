@@ -1,0 +1,18 @@
+{% extends "painel/base.html" %}
+
+{% block title %}
+  Painel Administrativo – Login
+{% endblock %}
+
+{% block content %}
+<!-- FORMULÁRIO -->
+    <div class="hero-section form-container">
+    <h2>Login</h2>
+    <form method="POST">
+        {% csrf_token %}
+        <input name="username" type="text" placeholder="Usuário">
+        <input name="password" type="password" placeholder="Senha">
+        <button type="submit" class="btn pulse">Entrar</button>
+    </form>
+</div>
+{% endblock %}
